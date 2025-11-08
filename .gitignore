@@ -1,0 +1,47 @@
+# Dependencies
+node_modules/
+package-lock.json
+
+# Environment variables
+.env
+
+# Playwright
+playwright-report/
+test-results/
+playwright/.cache/
+
+# Reports
+reports/*.json
+reports/*.html
+reports/*.pdf
+
+# Screenshots and videos
+tests/screens/*.png
+tests/screens/*.jpg
+test-results/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Build files
+dist/
+build/
+*.tsbuildinfo
+
+# Cucumber
+cucumber-report.json
+cucumber-report.html

@@ -1,0 +1,75 @@
+# ========================================
+# PipelineCraft-R3 Configuration
+# ========================================
+
+# Project Information
+project:
+  name: "PipelineCraft-R3"
+  description: "Automated Testing Architecture with Playwright, Cucumber & Screenplay Pattern"
+  version: "1.0.0"
+
+# Environment URLs
+environments:
+  e2e:
+    baseUrl: "https://www.saucedemo.com"
+    name: "SauceDemo"
+  api:
+    baseUrl: "https://dummyjson.com"
+    name: "DummyJSON"
+
+# Test Paths
+paths:
+  tests:
+    e2e:
+      features: "tests/e2e/features"
+      stepDefinitions: "tests/e2e/step-definitions"
+      pages: "tests/e2e/pages"
+    api: "tests/api"
+    data: "tests/data"
+    screens: "tests/screens"
+    utils: "tests/utils"
+  reports: "reports"
+  screenplay:
+    actors: "screenplay/actors"
+    tasks: "screenplay/tasks"
+    questions: "screenplay/questions"
+    interactions: "screenplay/interactions"
+
+# Browser Configuration
+browsers:
+  - name: "chromium"
+    headless: true
+  - name: "firefox"
+    headless: true
+  - name: "webkit"
+    headless: true
+
+# Test Configuration
+testConfig:
+  timeout: 30000
+  retries: 1
+  slowMo: 0
+  screenshotOnFailure: true
+  videoOnFailure: false
+  trace: "retain-on-failure"
+
+# Reporting
+reporting:
+  formats:
+    - html
+    - json
+    - junit
+  outputPath: "reports"
+  cucumber:
+    reportName: "cucumber-report"
+    theme: "bootstrap"
+  playwright:
+    reportName: "playwright-report"
+    open: "never"
+
+# CI/CD Configuration
+ci:
+  parallelWorkers: 2
+  failFast: false
+  retries: 2
+  timeout: 60000

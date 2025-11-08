@@ -1,0 +1,39 @@
+{
+  "name": "pipelinecraft-r3",
+  "version": "1.0.0",
+  "description": "Arquitectura de pruebas automatizadas con Playwright, Cucumber y patrón Screenplay",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm run test:e2e && npm run test:api",
+    "test:e2e": "cucumber-js --require-module ts-node/register --require tests/e2e/step-definitions/**/*.ts --format json:reports/cucumber-report.json --format html:reports/cucumber-report.html",
+    "test:api": "playwright test tests/api --reporter=html",
+    "test:ui": "playwright test tests/e2e --headed",
+    "test:report": "playwright show-report",
+    "generate:pdf": "ts-node tests/utils/generatePdfReport.ts",
+    "install:browsers": "playwright install"
+  },
+  "keywords": [
+    "playwright",
+    "cucumber",
+    "screenplay",
+    "e2e",
+    "api",
+    "testing",
+    "automation"
+  ],
+  "author": "PipelineCraft Team",
+  "license": "MIT",
+  "devDependencies": {
+    "@cucumber/cucumber": "^10.3.1",
+    "@playwright/test": "^1.42.1",
+    "@types/node": "^20.11.24",
+    "cucumber-html-reporter": "^7.1.1",
+    "dotenv": "^16.4.5",
+    "pdfkit": "^0.15.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "js-yaml": "^4.1.0"
+  }
+}

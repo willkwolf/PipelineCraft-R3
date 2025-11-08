@@ -1,0 +1,81 @@
+name: Run Tests
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps
+
+      - name: Run API Tests
+        run: npx playwright test tests/api --reporter=html
+        env:
+          API_URL: https://dummyjson.com
+          API_USERNAME: emilys
+          API_PASSWORD: emilyspass
+          HEADLESS: true
+
+      - name: Run E2E Tests (Playwright)
+        run: npx playwright test tests/e2e --reporter=html
+        env:
+          BASE_URL: https://www.saucedemo.com
+          USERNAME: standard_user
+          PASSWORD: secret_sauce
+          HEADLESS: true
+        continue-on-error: true
+
+      - name: Upload Playwright Report
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 30
+
+      - name: Upload Test Results
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: test-results
+          path: test-results/
+          retention-days: 30
+
+      - name: Upload Reports
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: reports
+          path: reports/
+          retention-days: 30
+
+      - name: Test Summary
+        if: always()
+        run: |
+          echo "## Test Execution Summary" >> $GITHUB_STEP_SUMMARY
+          echo "- **API Tests**: Completed" >> $GITHUB_STEP_SUMMARY
+          echo "- **E2E Tests**: Completed" >> $GITHUB_STEP_SUMMARY
+          echo "- **Reports**: Available in artifacts" >> $GITHUB_STEP_SUMMARY

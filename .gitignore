@@ -44,3 +44,6 @@ build/
 # Cucumber
 cucumber-report.json
 cucumber-report.html
+
+#Claude
+.claude

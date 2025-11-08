@@ -18,8 +18,7 @@ const common = {
   formatOptions: {
     snippetInterface: 'async-await',
     colorsEnabled: true
-  },
-  publishQuiet: true,
+  }
 };
 
 module.exports = {

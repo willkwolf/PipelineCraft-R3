@@ -5,7 +5,6 @@ import { Page } from '@playwright/test';
  */
 export class ProductsPage {
   private readonly pageTitle = '.title';
-  private readonly productItem = '.inventory_item';
   private readonly addToCartButton = (productName: string) =>
     `//div[text()="${productName}"]/ancestor::div[@class="inventory_item"]//button[contains(@class, "btn_inventory")]`;
   private readonly shoppingCartBadge = '.shopping_cart_badge';
@@ -23,7 +22,9 @@ export class ProductsPage {
   }
 
   async addProductToCart(productName: string): Promise<void> {
-    await this.page.click(this.addToCartButton(productName));
+    const button = this.page.locator(this.addToCartButton(productName));
+    await button.waitFor({ state: 'visible', timeout: 10000 });
+    await button.click();
   }
 
   async getCartItemCount(): Promise<number> {
@@ -36,7 +37,9 @@ export class ProductsPage {
   }
 
   async sortProducts(option: string): Promise<void> {
-    await this.page.selectOption(this.productSort, option);
+    const dropdown = this.page.locator(this.productSort);
+    await dropdown.waitFor({ state: 'visible', timeout: 10000 });
+    await dropdown.selectOption(option);
   }
 
   async getFirstProductName(): Promise<string> {
@@ -45,5 +48,10 @@ export class ProductsPage {
 
   async getAllProductNames(): Promise<string[]> {
     return await this.page.locator('.inventory_item_name').allTextContents();
+  }
+
+  async getAllProductPrices(): Promise<number[]> {
+    const priceElements = await this.page.locator('.inventory_item_price').allTextContents();
+    return priceElements.map(price => parseFloat(price.replace('$', '')));
   }
 }

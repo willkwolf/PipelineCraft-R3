@@ -12,13 +12,18 @@ export class LoginPage {
   constructor(private page: Page) {}
 
   async navigate(): Promise<void> {
-    await this.page.goto('/');
+    const baseUrl = process.env.BASE_URL || 'https://www.saucedemo.com';
+    await this.page.goto(baseUrl);
   }
 
   async login(username: string, password: string): Promise<void> {
     await this.page.fill(this.usernameInput, username);
     await this.page.fill(this.passwordInput, password);
-    await this.page.click(this.loginButton);
+    // Wait for navigation after login click
+    await Promise.all([
+      this.page.waitForLoadState('networkidle'),
+      this.page.click(this.loginButton)
+    ]);
   }
 
   async getErrorMessage(): Promise<string> {

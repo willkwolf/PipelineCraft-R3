@@ -5,6 +5,10 @@ import { LoginPage } from '../pages/LoginPage';
 import { ProductsPage } from '../pages/ProductsPage';
 import { CartPage } from '../pages/CartPage';
 import { CheckoutPage } from '../pages/CheckoutPage';
+import * as dotenv from 'dotenv';
+
+// Load environment variables
+dotenv.config();
 
 // Set default timeout
 setDefaultTimeout(30000);
@@ -38,9 +42,11 @@ Given('the user is on the SauceDemo homepage', async function () {
 Given('the user logs in with valid credentials', async function () {
   const loginPage = new LoginPage(page);
   await loginPage.login(
-    process.env.USERNAME || 'standard_user',
-    process.env.PASSWORD || 'secret_sauce'
+    process.env.SAUCE_USERNAME || 'standard_user',
+    process.env.SAUCE_PASSWORD || 'secret_sauce'
   );
+  // Wait for products page to load after login
+  await page.waitForSelector('.inventory_item', { state: 'visible', timeout: 10000 });
 });
 
 When('the user attempts to login with username {string} and password {string}', async function (username: string, password: string) {
@@ -139,13 +145,15 @@ Then('the products should be sorted alphabetically in descending order', async f
 });
 
 Then('the products should be sorted by price in ascending order', async function () {
-  // Note: This is a simplified check - in a real scenario, you'd extract and compare prices
-  await page.waitForTimeout(1000);
-  expect(true).toBeTruthy();
+  const productsPage = new ProductsPage(page);
+  const prices = await productsPage.getAllProductPrices();
+  const sortedPrices = [...prices].sort((a, b) => a - b);
+  expect(prices, `Expected prices to be sorted ascending but got: ${prices.join(', ')}`).toEqual(sortedPrices);
 });
 
 Then('the products should be sorted by price in descending order', async function () {
-  // Note: This is a simplified check - in a real scenario, you'd extract and compare prices
-  await page.waitForTimeout(1000);
-  expect(true).toBeTruthy();
+  const productsPage = new ProductsPage(page);
+  const prices = await productsPage.getAllProductPrices();
+  const sortedPrices = [...prices].sort((a, b) => b - a);
+  expect(prices, `Expected prices to be sorted descending but got: ${prices.join(', ')}`).toEqual(sortedPrices);
 });

@@ -12,8 +12,7 @@ const common = {
     'progress-bar',
     'html:reports/cucumber-report.html',
     'json:reports/cucumber-report.json',
-    'junit:reports/cucumber-junit.xml',
-    '@cucumber/pretty-formatter'
+    'junit:reports/cucumber-junit.xml'
   ],
   formatOptions: {
     snippetInterface: 'async-await',

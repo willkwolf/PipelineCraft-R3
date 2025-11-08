@@ -4,13 +4,13 @@
 
 Proyecto académico de automatización de pruebas que implementa una arquitectura completa de CI/CD utilizando el patrón de diseño Screenplay. El ejercicio integra Playwright para pruebas E2E y API, Cucumber con Gherkin para especificaciones BDD, y TypeScript como lenguaje principal. Se desarrolló un workflow de despliegue continuo en GitHub Actions, utilizando asistencia de IA (Claude Code) para validar el scripting de TypeScript y debuggear errores en los pipelines. Los escenarios E2E implementados en SauceDemo fueron replicados a nivel de API utilizando DummyJSON, consolidando aprendizajes sobre el patrón Screenplay y arquitecturas limpias de testing.
 
-## Stack Tecnológico
+## Herramientas Utilizadas
 
 - **Playwright** - Framework de automatización E2E y API Testing
-- **Cucumber + Gherkin** - Especificaciones BDD
+- **Cucumber + Gherkin** - Especificaciones BDD (Behavior Driven Development)
 - **TypeScript** - Lenguaje de programación tipado
 - **GitHub Actions** - CI/CD Pipeline
-- **Node.js 18+** - Runtime
+- **Node.js 18+** - Runtime de ejecución
 - **Claude Code** - Asistente IA para validación y debugging
 
 ## Arquitectura - Patrón Screenplay
@@ -75,7 +75,9 @@ API_USERNAME=emilys
 API_PASSWORD=emilyspass
 ```
 
-## Ejecución
+## Cómo Correr las Pruebas
+
+### Opción 1: Ejecución Local
 
 ```bash
 # Todas las pruebas (E2E + API)
@@ -97,22 +99,54 @@ npm run test:report
 npm run generate:pdf
 ```
 
+### Opción 2: Ejecución desde GitHub Actions
+
+#### Si tienes acceso Write al repositorio:
+1. Ve a la pestaña **Actions** del repositorio
+2. Selecciona el workflow **Run Tests**
+3. Haz clic en **Run workflow**
+4. Selecciona la rama (por defecto `main`)
+5. Haz clic en el botón verde **Run workflow**
+
+#### Si tienes acceso Read (colaboradores):
+1. Crea un **Pull Request** con cualquier cambio (puede ser mínimo, como agregar un espacio)
+2. El workflow se ejecuta **automáticamente** al crear/actualizar el PR
+3. Ve a la pestaña **Checks** del Pull Request para monitorear la ejecución
+4. Al finalizar, descarga los **artifacts** (reportes) desde la página del workflow
+5. Los reportes estarán disponibles durante 30 días
+
+**Nota:** No es necesario hacer fork del repositorio, solo crear un PR desde una rama.
+
 ## CI/CD - GitHub Actions
 
-El workflow se ejecuta automáticamente en:
-- Push a `main` o `master`
-- Pull Requests
-- Manualmente desde la pestaña Actions
+El workflow configurado en [.github/workflows/run-tests.yml](.github/workflows/run-tests.yml) se ejecuta automáticamente en:
 
-**Artifacts generados:**
-- `playwright-report`: Resultados de pruebas API (HTML)
-- `cucumber-reports`: Resultados de pruebas E2E (HTML, JSON, JUnit)
+- **Push** a las ramas `main` o `master`
+- **Pull Requests** hacia `main` o `master`
+- **Manualmente** mediante `workflow_dispatch` (requiere acceso Write)
 
-Para ejecutar manualmente: **Actions** → **Run Tests** → **Run workflow**
+### Artifacts Generados
+
+Después de cada ejecución, se generan 2 artifacts disponibles para descarga:
+
+| Artifact | Contenido | Formato |
+|----------|-----------|---------|
+| `playwright-report` | Resultados de pruebas API | HTML interactivo |
+| `cucumber-reports` | Resultados de pruebas E2E | HTML, JSON, JUnit |
+
+**Retención:** 30 días
+
+### Cómo Descargar Artifacts desde un Pull Request
+
+1. Abre el Pull Request
+2. Ve a la pestaña **Checks** (o **Details** del workflow)
+3. Haz scroll hasta el final de la página del workflow
+4. En la sección **Artifacts**, descarga los reportes deseados
+5. Extrae los archivos ZIP y abre los HTML en tu navegador
 
 ## Reportes
 
-Los reportes se generan en `/reports`:
+Los reportes se generan localmente en la carpeta `/reports`:
 
 | Tipo | Ubicación |
 |------|-----------|

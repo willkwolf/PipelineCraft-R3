@@ -6,7 +6,7 @@
   "scripts": {
     "test": "npm run test:e2e && npm run test:api",
     "test:e2e": "cucumber-js --require-module ts-node/register --require tests/e2e/step-definitions/**/*.ts --format json:reports/cucumber-report.json --format html:reports/cucumber-report.html",
-    "test:api": "playwright test tests/api --reporter=html",
+    "test:api": "cross-env API_URL=https://dummyjson.com playwright test tests/api --project=api --reporter=html",
     "test:ui": "playwright test tests/e2e --headed",
     "test:report": "playwright show-report",
     "generate:pdf": "ts-node tests/utils/generatePdfReport.ts",
@@ -28,6 +28,7 @@
     "@playwright/test": "^1.42.1",
     "@types/node": "^20.11.24",
     "@types/pdfkit": "^0.17.3",
+    "cross-env": "^10.1.0",
     "cucumber-html-reporter": "^7.1.1",
     "dotenv": "^16.4.5",
     "pdfkit": "^0.15.0",

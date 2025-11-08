@@ -1,10 +1,11 @@
 import { test, expect } from '@playwright/test';
 import { ApiHelper } from '../utils/apiHelper';
+import { ApiConfig } from '../utils/apiConfig';
 
 test.describe('API Authentication Tests - DummyJSON', () => {
-  const baseURL = process.env.API_URL || 'https://dummyjson.com';
-  const validUsername = process.env.API_USERNAME || 'emilys';
-  const validPassword = process.env.API_PASSWORD || 'emilyspass';
+  const baseURL = ApiConfig.BASE_URL;
+  const validUsername = ApiConfig.CREDENTIALS.username;
+  const validPassword = ApiConfig.CREDENTIALS.password;
 
   test('POST /auth/login - Successful login with valid credentials', async ({ request }) => {
     const response = await request.post(`${baseURL}/auth/login`, {

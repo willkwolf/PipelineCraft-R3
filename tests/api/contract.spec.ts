@@ -1,41 +1,33 @@
 import { test, expect } from '@playwright/test';
 import { ApiHelper } from '../utils/apiHelper';
+import { ApiConfig } from '../utils/apiConfig';
 
 test.describe('API Contract Tests - DummyJSON Schema Validation', () => {
-  const baseURL = process.env.API_URL || 'https://dummyjson.com';
+  const baseURL = ApiConfig.BASE_URL;
 
   test('Auth Login Response Contract - Validate complete schema', async ({ request }) => {
     const response = await request.post(`${baseURL}/auth/login`, {
-      data: {
-        username: process.env.API_USERNAME || 'emilys',
-        password: process.env.API_PASSWORD || 'emilyspass'
-      }
+      data: ApiConfig.CREDENTIALS
     });
 
     const data = await response.json();
 
-    // Validate required fields
-    const requiredFields = ['id', 'username', 'email', 'firstName', 'lastName', 'gender', 'image', 'accessToken', 'refreshToken'];
-    requiredFields.forEach(field => {
-      expect(data).toHaveProperty(field);
+    // Validate schema: fields and types
+    ApiHelper.validateSchema(data, {
+      id: 'number',
+      username: 'string',
+      email: 'string',
+      firstName: 'string',
+      lastName: 'string',
+      gender: 'string',
+      image: 'string',
+      accessToken: 'string',
+      refreshToken: 'string'
     });
 
-    // Validate field types
-    expect(typeof data.id).toBe('number');
-    expect(typeof data.username).toBe('string');
-    expect(typeof data.email).toBe('string');
-    expect(typeof data.firstName).toBe('string');
-    expect(typeof data.lastName).toBe('string');
-    expect(typeof data.gender).toBe('string');
-    expect(typeof data.image).toBe('string');
-    expect(typeof data.accessToken).toBe('string');
-    expect(typeof data.refreshToken).toBe('string');
-
-    // Validate email format
-    expect(data.email).toMatch(/^[^\s@]+@[^\s@]+\.[^\s@]+$/);
-
-    // Validate image URL format
-    expect(data.image).toMatch(/^https?:\/\/.+/);
+    // Validate formats
+    ApiHelper.validateEmail(data.email);
+    ApiHelper.validateURL(data.image);
 
     // Validate token lengths (JWT tokens are long)
     expect(data.accessToken.length).toBeGreaterThan(100);
@@ -46,68 +38,45 @@ test.describe('API Contract Tests - DummyJSON Schema Validation', () => {
     const response = await request.get(`${baseURL}/products/1`);
     const product = await response.json();
 
-    // Validate all required product fields
-    const requiredFields = [
-      'id',
-      'title',
-      'description',
-      'price',
-      'discountPercentage',
-      'rating',
-      'stock',
-      'brand',
-      'category',
-      'thumbnail',
-      'images'
-    ];
-
-    requiredFields.forEach(field => {
-      expect(product).toHaveProperty(field);
+    // Validate schema: fields and types
+    ApiHelper.validateSchema(product, {
+      id: 'number',
+      title: 'string',
+      description: 'string',
+      price: 'number',
+      discountPercentage: 'number',
+      rating: 'number',
+      stock: 'number',
+      brand: 'string',
+      category: 'string',
+      thumbnail: 'string'
     });
 
-    // Validate field types
-    expect(typeof product.id).toBe('number');
-    expect(typeof product.title).toBe('string');
-    expect(typeof product.description).toBe('string');
-    expect(typeof product.price).toBe('number');
-    expect(typeof product.discountPercentage).toBe('number');
-    expect(typeof product.rating).toBe('number');
-    expect(typeof product.stock).toBe('number');
-    expect(typeof product.brand).toBe('string');
-    expect(typeof product.category).toBe('string');
-    expect(typeof product.thumbnail).toBe('string');
     expect(Array.isArray(product.images)).toBeTruthy();
 
     // Validate value ranges
     expect(product.price).toBeGreaterThan(0);
-    expect(product.rating).toBeGreaterThanOrEqual(0);
-    expect(product.rating).toBeLessThanOrEqual(5);
+    ApiHelper.validateRange(product.rating, 0, 5);
     expect(product.stock).toBeGreaterThanOrEqual(0);
-    expect(product.discountPercentage).toBeGreaterThanOrEqual(0);
-    expect(product.discountPercentage).toBeLessThanOrEqual(100);
+    ApiHelper.validateRange(product.discountPercentage, 0, 100);
 
     // Validate URLs
-    expect(product.thumbnail).toMatch(/^https?:\/\/.+/);
-    product.images.forEach((image: string) => {
-      expect(image).toMatch(/^https?:\/\/.+/);
-    });
+    ApiHelper.validateURL(product.thumbnail);
+    product.images.forEach((image: string) => ApiHelper.validateURL(image));
   });
 
   test('Products List Response Contract - Validate pagination structure', async ({ request }) => {
     const response = await request.get(`${baseURL}/products?limit=10&skip=5`);
     const data = await response.json();
 
-    // Validate top-level structure
-    expect(data).toHaveProperty('products');
-    expect(data).toHaveProperty('total');
-    expect(data).toHaveProperty('skip');
-    expect(data).toHaveProperty('limit');
+    // Validate schema: fields and types
+    ApiHelper.validateSchema(data, {
+      total: 'number',
+      skip: 'number',
+      limit: 'number'
+    });
 
-    // Validate types
     expect(Array.isArray(data.products)).toBeTruthy();
-    expect(typeof data.total).toBe('number');
-    expect(typeof data.skip).toBe('number');
-    expect(typeof data.limit).toBe('number');
 
     // Validate pagination values
     expect(data.skip).toBe(5);
@@ -120,33 +89,31 @@ test.describe('API Contract Tests - DummyJSON Schema Validation', () => {
     const response = await request.get(`${baseURL}/carts/1`);
     const cart = await response.json();
 
-    // Validate required cart fields
-    const requiredFields = ['id', 'products', 'total', 'discountedTotal', 'userId', 'totalProducts', 'totalQuantity'];
-
-    requiredFields.forEach(field => {
-      expect(cart).toHaveProperty(field);
+    // Validate schema: fields and types
+    ApiHelper.validateSchema(cart, {
+      id: 'number',
+      total: 'number',
+      discountedTotal: 'number',
+      userId: 'number',
+      totalProducts: 'number',
+      totalQuantity: 'number'
     });
 
-    // Validate field types
-    expect(typeof cart.id).toBe('number');
     expect(Array.isArray(cart.products)).toBeTruthy();
-    expect(typeof cart.total).toBe('number');
-    expect(typeof cart.discountedTotal).toBe('number');
-    expect(typeof cart.userId).toBe('number');
-    expect(typeof cart.totalProducts).toBe('number');
-    expect(typeof cart.totalQuantity).toBe('number');
 
     // Validate cart products structure
     if (cart.products.length > 0) {
       const firstProduct = cart.products[0];
 
-      expect(firstProduct).toHaveProperty('id');
-      expect(firstProduct).toHaveProperty('title');
-      expect(firstProduct).toHaveProperty('price');
-      expect(firstProduct).toHaveProperty('quantity');
-      expect(firstProduct).toHaveProperty('total');
-      expect(firstProduct).toHaveProperty('discountPercentage');
-      expect(firstProduct).toHaveProperty('discountedTotal');
+      ApiHelper.validateSchema(firstProduct, {
+        id: 'number',
+        title: 'string',
+        price: 'number',
+        quantity: 'number',
+        total: 'number',
+        discountPercentage: 'number',
+        discountedTotal: 'number'
+      });
 
       // Validate calculations
       const expectedTotal = firstProduct.price * firstProduct.quantity;
@@ -181,13 +148,11 @@ test.describe('API Contract Tests - DummyJSON Schema Validation', () => {
 
     // Validate category structure
     const firstCategory = categories[0];
-    expect(firstCategory).toHaveProperty('slug');
-    expect(firstCategory).toHaveProperty('name');
-    expect(firstCategory).toHaveProperty('url');
-
-    expect(typeof firstCategory.slug).toBe('string');
-    expect(typeof firstCategory.name).toBe('string');
-    expect(typeof firstCategory.url).toBe('string');
+    ApiHelper.validateSchema(firstCategory, {
+      slug: 'string',
+      name: 'string',
+      url: 'string'
+    });
 
     // Validate URL format
     expect(firstCategory.url).toMatch(/^https?:\/\/.+\/products\/category\/.+/);

@@ -1,12 +1,10 @@
-import { APIRequestContext, APIResponse } from '@playwright/test';
+import { APIResponse } from '@playwright/test';
 import { expect } from '@playwright/test';
 
 /**
  * API Helper - Utility functions for API testing
  */
 export class ApiHelper {
-  constructor(private apiContext: APIRequestContext) {}
-
   /**
    * Validate response status code
    */
@@ -62,49 +60,24 @@ export class ApiHelper {
   }
 
   /**
-   * Extract value from response
+   * Validate URL format
    */
-  static async extractValue(response: APIResponse, path: string): Promise<any> {
-    const body = await response.json();
-    const keys = path.split('.');
-    let value = body;
-
-    for (const key of keys) {
-      value = value[key];
-    }
-
-    return value;
+  static validateURL(url: string): void {
+    expect(url).toMatch(/^https?:\/\/.+/);
   }
 
   /**
-   * Make authenticated request
+   * Validate email format
    */
-  async makeAuthenticatedRequest(
-    method: 'GET' | 'POST' | 'PUT' | 'DELETE',
-    endpoint: string,
-    token: string,
-    data?: any
-  ): Promise<APIResponse> {
-    const options: any = {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-    };
+  static validateEmail(email: string): void {
+    expect(email).toMatch(/^[^\s@]+@[^\s@]+\.[^\s@]+$/);
+  }
 
-    if (data) {
-      options.data = data;
-    }
-
-    switch (method) {
-      case 'GET':
-        return await this.apiContext.get(endpoint, options);
-      case 'POST':
-        return await this.apiContext.post(endpoint, options);
-      case 'PUT':
-        return await this.apiContext.put(endpoint, options);
-      case 'DELETE':
-        return await this.apiContext.delete(endpoint, options);
-    }
+  /**
+   * Validate number is within range
+   */
+  static validateRange(value: number, min: number, max: number): void {
+    expect(value).toBeGreaterThanOrEqual(min);
+    expect(value).toBeLessThanOrEqual(max);
   }
 }

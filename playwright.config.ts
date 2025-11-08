@@ -63,7 +63,8 @@ export default defineConfig({
         ...devices['Desktop Chrome'],
         headless: process.env.HEADLESS === 'true',
       },
-      testMatch: /.*\.spec\.ts/,
+      testMatch: /tests\/e2e\/.*\.spec\.ts/,
+      testIgnore: /tests\/api\/.*\.spec\.ts/,
     },
 
     {
@@ -72,7 +73,8 @@ export default defineConfig({
         ...devices['Desktop Firefox'],
         headless: process.env.HEADLESS === 'true',
       },
-      testMatch: /.*\.spec\.ts/,
+      testMatch: /tests\/e2e\/.*\.spec\.ts/,
+      testIgnore: /tests\/api\/.*\.spec\.ts/,
     },
 
     {
@@ -81,7 +83,8 @@ export default defineConfig({
         ...devices['Desktop Safari'],
         headless: process.env.HEADLESS === 'true',
       },
-      testMatch: /.*\.spec\.ts/,
+      testMatch: /tests\/e2e\/.*\.spec\.ts/,
+      testIgnore: /tests\/api\/.*\.spec\.ts/,
     },
 
     // API testing project (no browser needed)
@@ -89,8 +92,13 @@ export default defineConfig({
       name: 'api',
       use: {
         baseURL: process.env.API_URL || 'https://dummyjson.com',
+        // API-specific settings: no screenshots/videos needed
+        screenshot: 'off',
+        video: 'off',
+        trace: 'on-first-retry',
       },
       testMatch: /tests\/api\/.*\.spec\.ts/,
+      timeout: 15000, // API tests should be faster
     },
   ],
 

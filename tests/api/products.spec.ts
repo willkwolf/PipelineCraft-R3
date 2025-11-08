@@ -1,8 +1,9 @@
 import { test, expect } from '@playwright/test';
 import { ApiHelper } from '../utils/apiHelper';
+import { ApiConfig } from '../utils/apiConfig';
 
 test.describe('API Products Tests - DummyJSON', () => {
-  const baseURL = process.env.API_URL || 'https://dummyjson.com';
+  const baseURL = ApiConfig.BASE_URL;
 
   test('GET /products - Get all products with non-empty list', async ({ request }) => {
     const response = await request.get(`${baseURL}/products`);

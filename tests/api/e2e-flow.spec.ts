@@ -1,10 +1,11 @@
 import { test, expect } from '@playwright/test';
 import { ApiHelper } from '../utils/apiHelper';
+import { ApiConfig } from '../utils/apiConfig';
 
 test.describe('API E2E Flow - Complete User Shopping Journey', () => {
-  const baseURL = process.env.API_URL || 'https://dummyjson.com';
-  const validUsername = process.env.API_USERNAME || 'emilys';
-  const validPassword = process.env.API_PASSWORD || 'emilyspass';
+  const baseURL = ApiConfig.BASE_URL;
+  const validUsername = ApiConfig.CREDENTIALS.username;
+  const validPassword = ApiConfig.CREDENTIALS.password;
 
   let authToken: string;
   let refreshToken: string;
@@ -75,24 +76,25 @@ test.describe('API E2E Flow - Complete User Shopping Journey', () => {
     expect(cartData.total).toBeGreaterThan(0);
     expect(cartData.discountedTotal).toBeLessThanOrEqual(cartData.total);
 
-    // STEP 4: Retrieve the created cart
-    console.log('STEP 4: Retrieving cart...');
-    const getCartResponse = await request.get(`${baseURL}/carts/${cartId}`);
+    // STEP 4: Retrieve a real cart (DummyJSON limitation: created carts are not persisted)
+    // Using existing cart from test data
+    console.log('STEP 4: Retrieving an existing cart...');
+    const getCartResponse = await request.get(`${baseURL}/carts/${ApiConfig.TEST_RESOURCE_IDS.cart}`);
 
     await ApiHelper.validateStatus(getCartResponse, 200);
 
     const retrievedCart = await getCartResponse.json();
 
     console.log(`✓ Cart retrieved successfully`);
-    expect(retrievedCart.id).toBe(cartId);
-    expect(retrievedCart.products.length).toBe(selectedProducts.length);
+    expect(retrievedCart.id).toBe(ApiConfig.TEST_RESOURCE_IDS.cart);
+    expect(retrievedCart.products.length).toBeGreaterThan(0);
 
-    // STEP 5: Update cart (add more products with merge)
-    console.log('STEP 5: Updating cart (adding more products)...');
-    const updateCartResponse = await request.put(`${baseURL}/carts/${cartId}`, {
+    // STEP 5: Update cart (using existing cart - DummyJSON limitation)
+    console.log('STEP 5: Updating an existing cart...');
+    const updateCartResponse = await request.put(`${baseURL}/carts/${ApiConfig.TEST_RESOURCE_IDS.cart}`, {
       data: {
         merge: true,
-        products: [{ id: selectedProducts[0], quantity: 5 }] // Increase quantity of first product
+        products: [{ id: 1, quantity: 5 }] // Update product quantity
       }
     });
 
@@ -103,15 +105,15 @@ test.describe('API E2E Flow - Complete User Shopping Journey', () => {
     console.log(`✓ Cart updated successfully`);
     console.log(`✓ New total: $${updatedCart.total.toFixed(2)}`);
 
-    // STEP 6: Get all carts for the user
-    console.log('STEP 6: Fetching all user carts...');
-    const userCartsResponse = await request.get(`${baseURL}/carts/user/${userId}`);
+    // STEP 6: Get all carts for a different user (user with existing carts)
+    console.log(`STEP 6: Fetching all user carts (user ${ApiConfig.TEST_USER_IDS.withCarts})...`);
+    const userCartsResponse = await request.get(`${baseURL}/carts/user/${ApiConfig.TEST_USER_IDS.withCarts}`);
 
     await ApiHelper.validateStatus(userCartsResponse, 200);
 
     const userCarts = await userCartsResponse.json();
 
-    console.log(`✓ User has ${userCarts.carts.length} cart(s)`);
+    console.log(`✓ User ${ApiConfig.TEST_USER_IDS.withCarts} has ${userCarts.carts.length} cart(s)`);
 
     expect(Array.isArray(userCarts.carts)).toBeTruthy();
     expect(userCarts.carts.length).toBeGreaterThan(0);
@@ -133,7 +135,7 @@ test.describe('API E2E Flow - Complete User Shopping Journey', () => {
 
     // STEP 8: Delete the cart (simulate checkout)
     console.log('STEP 8: Deleting cart (checkout simulation)...');
-    const deleteCartResponse = await request.delete(`${baseURL}/carts/${cartId}`);
+    const deleteCartResponse = await request.delete(`${baseURL}/carts/${ApiConfig.TEST_RESOURCE_IDS.cart}`);
 
     await ApiHelper.validateStatus(deleteCartResponse, 200);
 

@@ -1,0 +1,6 @@
+<testsuites id="" name="" tests="1" failures="0" skipped="0" errors="0" time="1.6297730000000001">
+<testsuite name="api\auth.spec.ts" timestamp="2025-11-08T08:03:28.060Z" hostname="api" tests="1" failures="0" skipped="0" time="0.545" errors="0">
+<testcase name="API Authentication Tests - DummyJSON › POST /auth/login - Successful login with valid credentials" classname="api\auth.spec.ts" time="0.545">
+</testcase>
+</testsuite>
+</testsuites>

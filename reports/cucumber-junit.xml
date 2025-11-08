@@ -1,0 +1,72 @@
+<?xml version="1.0"?>
+<testsuite failures="0" skipped="0" name="cucumber-js" time="26.656637167000003" tests="10">
+  <testcase classname="Login Failure Scenarios" name="Login with invalid username" time="4.880663895999999">
+    <system-out><![CDATA[Given the user is on the SauceDemo homepage...............................passed
+When the user attempts to login with username "invalid_user" and passwo...passed
+Then the user should see an error message.................................passed
+And the error message should contain "Username and password do not matc...passed]]></system-out>
+  </testcase>
+  <testcase classname="Login Failure Scenarios" name="Login with invalid password" time="4.652572296000001">
+    <system-out><![CDATA[Given the user is on the SauceDemo homepage...............................passed
+When the user attempts to login with username "standard_user" and passw...passed
+Then the user should see an error message.................................passed
+And the error message should contain "Username and password do not matc...passed]]></system-out>
+  </testcase>
+  <testcase classname="Login Failure Scenarios" name="Login with locked out user" time="4.6328376989999995">
+    <system-out><![CDATA[Given the user is on the SauceDemo homepage...............................passed
+When the user attempts to login with username "locked_out_user" and pas...passed
+Then the user should see an error message.................................passed
+And the error message should contain "Sorry, this user has been locked ...passed]]></system-out>
+  </testcase>
+  <testcase classname="Login Failure Scenarios" name="Login with empty credentials" time="1.6769667960000003">
+    <system-out><![CDATA[Given the user is on the SauceDemo homepage...............................passed
+When the user attempts to login with username "" and password ""..........passed
+Then the user should see an error message.................................passed
+And the error message should contain "Username is required"...............passed]]></system-out>
+  </testcase>
+  <testcase classname="Product Sorting" name="Sort products by name (A to Z)" time="1.718311096">
+    <system-out><![CDATA[Given the user is on the SauceDemo homepage...............................passed
+And the user logs in with valid credentials...............................passed
+When the user sorts products by "Name (A to Z)"...........................passed
+Then the products should be sorted alphabetically in ascending order......passed]]></system-out>
+  </testcase>
+  <testcase classname="Product Sorting" name="Sort products by name (Z to A)" time="1.6979655989999998">
+    <system-out><![CDATA[Given the user is on the SauceDemo homepage...............................passed
+And the user logs in with valid credentials...............................passed
+When the user sorts products by "Name (Z to A)"...........................passed
+Then the products should be sorted alphabetically in descending order.....passed]]></system-out>
+  </testcase>
+  <testcase classname="Product Sorting" name="Sort products by price (low to high)" time="1.706510596">
+    <system-out><![CDATA[Given the user is on the SauceDemo homepage...............................passed
+And the user logs in with valid credentials...............................passed
+When the user sorts products by "Price (low to high)".....................passed
+Then the products should be sorted by price in ascending order............passed]]></system-out>
+  </testcase>
+  <testcase classname="Product Sorting" name="Sort products by price (high to low)" time="1.671447997">
+    <system-out><![CDATA[Given the user is on the SauceDemo homepage...............................passed
+And the user logs in with valid credentials...............................passed
+When the user sorts products by "Price (high to low)".....................passed
+Then the products should be sorted by price in descending order...........passed]]></system-out>
+  </testcase>
+  <testcase classname="Complete Purchase Flow" name="Successful purchase of products" time="1.9930366970000004">
+    <system-out><![CDATA[Given the user is on the SauceDemo homepage...............................passed
+Given the user logs in with valid credentials.............................passed
+When the user adds "Sauce Labs Backpack" to the cart......................passed
+And the user adds "Sauce Labs Bike Light" to the cart.....................passed
+Then the shopping cart should show 2 items................................passed
+When the user proceeds to checkout........................................passed
+And the user fills checkout information with:.............................passed
+And the user completes the purchase.......................................passed
+Then the user should see the order confirmation message "Thank you for ...passed]]></system-out>
+  </testcase>
+  <testcase classname="Complete Purchase Flow" name="Purchase single product" time="2.026324495">
+    <system-out><![CDATA[Given the user is on the SauceDemo homepage...............................passed
+Given the user logs in with valid credentials.............................passed
+When the user adds "Sauce Labs Bolt T-Shirt" to the cart..................passed
+Then the shopping cart should show 1 item.................................passed
+When the user proceeds to checkout........................................passed
+And the user fills checkout information with:.............................passed
+And the user completes the purchase.......................................passed
+Then the user should see the order confirmation message "Thank you for ...passed]]></system-out>
+  </testcase>
+</testsuite>

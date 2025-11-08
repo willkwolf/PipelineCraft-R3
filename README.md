@@ -1,356 +1,168 @@
-# PipelineCraft-R3 🚀
+# PipelineCraft-R3
 
-Arquitectura de pruebas automatizadas con Playwright, Cucumber y patrón Screenplay, integrada con CI/CD en GitHub Actions.
+## Abstract
 
-## 📋 Descripción
+Proyecto académico de automatización de pruebas que implementa una arquitectura completa de CI/CD utilizando el patrón de diseño Screenplay. El ejercicio integra Playwright para pruebas E2E y API, Cucumber con Gherkin para especificaciones BDD, y TypeScript como lenguaje principal. Se desarrolló un workflow de despliegue continuo en GitHub Actions, utilizando asistencia de IA (Claude Code) para validar el scripting de TypeScript y debuggear errores en los pipelines. Los escenarios E2E implementados en SauceDemo fueron replicados a nivel de API utilizando DummyJSON, consolidando aprendizajes sobre el patrón Screenplay y arquitecturas limpias de testing.
 
-Este proyecto implementa una arquitectura completa de pruebas automatizadas que combina:
-- **Pruebas E2E (End-to-End)** en SauceDemo usando Playwright
-- **Pruebas de API** en DummyJSON usando Playwright API Testing
-- **BDD (Behavior Driven Development)** con Cucumber y Gherkin
-- **Patrón Screenplay** para arquitectura limpia y mantenible
-- **CI/CD** con GitHub Actions
+## Stack Tecnológico
 
-## 🛠️ Tecnologías Utilizadas
+- **Playwright** - Framework de automatización E2E y API Testing
+- **Cucumber + Gherkin** - Especificaciones BDD
+- **TypeScript** - Lenguaje de programación tipado
+- **GitHub Actions** - CI/CD Pipeline
+- **Node.js 18+** - Runtime
+- **Claude Code** - Asistente IA para validación y debugging
 
-- **[Playwright](https://playwright.dev/)** - Framework de automatización para pruebas E2E y API
-- **[Cucumber](https://cucumber.io/)** - Framework BDD con Gherkin
-- **[TypeScript](https://www.typescriptlang.org/)** - Lenguaje de programación tipado
-- **[GitHub Actions](https://github.com/features/actions)** - CI/CD pipeline
-- **Node.js 18+** - Entorno de ejecución
+## Arquitectura - Patrón Screenplay
 
-## 📁 Estructura del Proyecto
+El patrón Screenplay estructura las pruebas en capas de responsabilidad:
 
-```
-PipelineCraft-R3/
-├── .github/
-│   └── workflows/
-│       └── run-tests.yml          # GitHub Actions workflow
-├── screenplay/
-│   ├── actors/                     # Actores del patrón Screenplay
-│   │   ├── Actor.ts               # Clase base
-│   │   ├── ShopperActor.ts        # Actor para E2E
-│   │   └── ApiUserActor.ts        # Actor para API
-│   ├── tasks/                      # Tareas de negocio
-│   │   ├── Login.ts
-│   │   ├── AddToCart.ts
-│   │   ├── Checkout.ts
-│   │   ├── AuthenticateUser.ts
-│   │   ├── GetProducts.ts
-│   │   └── ManageCart.ts
-│   ├── questions/                  # Validaciones
-│   │   ├── ApiResponse.ts
-│   │   └── PageElement.ts
-│   └── interactions/               # Interacciones atómicas
-│       ├── Click.ts
-│       ├── Fill.ts
-│       ├── Navigate.ts
-│       ├── Wait.ts
-│       └── ApiRequest.ts
-├── tests/
-│   ├── e2e/
-│   │   ├── features/              # Archivos .feature (Gherkin)
-│   │   │   ├── purchase-flow.feature
-│   │   │   ├── login-failed.feature
-│   │   │   └── product-sorting.feature
-│   │   ├── step-definitions/      # Step definitions de Cucumber
-│   │   │   └── common.steps.ts
-│   │   └── pages/                 # Page Objects
-│   │       ├── LoginPage.ts
-│   │       ├── ProductsPage.ts
-│   │       ├── CartPage.ts
-│   │       └── CheckoutPage.ts
-│   ├── api/                        # Pruebas de API
-│   │   ├── auth.spec.ts           # Autenticación
-│   │   ├── products.spec.ts       # Productos
-│   │   ├── contract.spec.ts       # Pruebas de contrato
-│   │   └── e2e-flow.spec.ts       # Flujo completo
-│   └── utils/
-│       ├── apiHelper.ts           # Utilidades para API
-│       └── generatePdfReport.ts   # Generador de reportes PDF
-├── reports/                        # Reportes de ejecución
-├── .env                           # Variables de entorno
-├── .env.example                   # Template de variables
-├── config.yml                     # Configuración global
-├── playwright.config.ts           # Configuración de Playwright
-├── cucumber.js                    # Configuración de Cucumber
-├── package.json                   # Dependencias del proyecto
-└── README.md                      # Este archivo
-```
+- **Actors**: Representan usuarios del sistema (`ShopperActor`, `ApiUserActor`)
+- **Tasks**: Acciones de negocio de alto nivel (`Login`, `Checkout`, `AuthenticateUser`)
+- **Interactions**: Operaciones atómicas (`Click`, `Fill`, `ApiRequest`)
+- **Questions**: Validaciones y aserciones (`ApiResponse`, `PageElement`)
 
-## 🎯 Escenarios Cubiertos
+Esta arquitectura promueve código reutilizable, mantenible y expresivo.
 
-### Pruebas E2E (SauceDemo)
+## Escenarios de Prueba
 
-#### 1. **Flujo de Compra Exitoso** (Happy Path)
-- Login con credenciales válidas
-- Selección de productos
-- Agregar al carrito
-- Proceso de checkout
-- Confirmación de orden
+### E2E (SauceDemo)
+1. **Flujo de compra exitoso** - Login, selección de productos, checkout y confirmación
+2. **Login fallido** - Validación de credenciales inválidas, usuario bloqueado, campos vacíos
+3. **Ordenamiento de productos** - Por nombre y precio
 
-#### 2. **Escenarios de Login Fallido** (Negative Testing)
-- Credenciales inválidas
-- Usuario bloqueado
-- Campos vacíos
+### API (DummyJSON)
+Los escenarios E2E fueron replicados a nivel de API, cubriendo:
+- **Autenticación**: Login, refresh token, obtener usuario autenticado
+- **Productos**: CRUD completo, búsqueda, categorías
+- **Carrito**: Crear, actualizar, eliminar, consultar carritos
+- **Contract Testing**: Validación de schemas, tipos de datos, formatos (email, URL, JWT)
+- **Flujo E2E**: Login → Productos → Carrito → Actualización → Eliminación
 
-#### 3. **Ordenamiento de Productos**
-- Por nombre (A-Z, Z-A)
-- Por precio (menor a mayor, mayor a menor)
+**Total:** 24 pruebas API + 10 escenarios E2E
 
-### Pruebas de API (DummyJSON)
-
-#### 1. **Autenticación**
-- `POST /auth/login` - Login exitoso y fallido
-- `GET /auth/me` - Obtener usuario autenticado
-- `POST /auth/refresh` - Refrescar token
-
-#### 2. **Productos**
-- `GET /products` - Listar productos
-- `GET /products/:id` - Obtener producto por ID
-- `GET /products/search` - Buscar productos
-- `GET /products/categories` - Listar categorías
-- `POST /products/add` - Agregar producto
-- `PUT /products/:id` - Actualizar producto
-- `DELETE /products/:id` - Eliminar producto
-
-#### 3. **Carrito de Compras**
-- `POST /carts/add` - Crear carrito
-- `GET /carts/:id` - Obtener carrito
-- `PUT /carts/:id` - Actualizar carrito
-- `DELETE /carts/:id` - Eliminar carrito
-
-#### 4. **Pruebas de Contrato**
-- Validación de schemas JSON
-- Validación de tipos de datos
-- Validación de formatos (email, URL, JWT)
-
-#### 5. **Flujo E2E Completo**
-- Login → Listar productos → Crear carrito → Actualizar → Eliminar
-
-## 🚀 Instalación
+## Instalación
 
 ### Prerrequisitos
+- Node.js 18+
+- npm (incluido con Node.js)
+- Git
 
-- **Node.js 18+** ([Descargar](https://nodejs.org/))
-- **npm** (incluido con Node.js)
-- **Git** ([Descargar](https://git-scm.com/))
-
-### Pasos de Instalación
-
-1. **Clonar el repositorio**
+### Pasos
 
 ```bash
+# 1. Clonar repositorio
 git clone https://github.com/willkwolf/PipelineCraft-R3.git
 cd PipelineCraft-R3
-```
 
-2. **Instalar dependencias**
-
-```bash
+# 2. Instalar dependencias
 npm install
-```
 
-3. **Instalar navegadores de Playwright**
-
-```bash
+# 3. Instalar navegadores
 npx playwright install
-```
 
-4. **Configurar variables de entorno**
-
-Copia el archivo `.env.example` a `.env`:
-
-```bash
+# 4. Configurar variables de entorno (opcional)
 cp .env.example .env
 ```
 
-El archivo `.env` ya contiene las configuraciones necesarias:
-
+El archivo `.env` incluye configuraciones por defecto:
 ```env
-# E2E Tests - SauceDemo
 BASE_URL=https://www.saucedemo.com
+API_URL=https://dummyjson.com
 USERNAME=standard_user
 PASSWORD=secret_sauce
-
-# API Tests - DummyJSON
-API_URL=https://dummyjson.com
 API_USERNAME=emilys
 API_PASSWORD=emilyspass
 ```
 
-## ▶️ Ejecución de Pruebas
-
-### Ejecución Local
-
-#### Ejecutar todas las pruebas
+## Ejecución
 
 ```bash
+# Todas las pruebas (E2E + API)
 npm test
-```
 
-#### Ejecutar solo pruebas E2E
-
-```bash
+# Solo E2E (Cucumber)
 npm run test:e2e
-```
 
-#### Ejecutar solo pruebas de API
-
-```bash
+# Solo API (Playwright)
 npm run test:api
-```
 
-#### Ejecutar pruebas con interfaz (headed mode)
-
-```bash
+# Con interfaz gráfica
 npm run test:ui
-```
 
-#### Ver reporte de Playwright
-
-```bash
+# Ver reporte HTML
 npm run test:report
-```
 
-#### Generar reporte PDF
-
-```bash
+# Generar PDF
 npm run generate:pdf
 ```
 
-### Ejecución en CI/CD
+## CI/CD - GitHub Actions
 
-El proyecto está configurado con GitHub Actions. Las pruebas se ejecutan automáticamente en:
+El workflow se ejecuta automáticamente en:
+- Push a `main` o `master`
+- Pull Requests
+- Manualmente desde la pestaña Actions
 
-- **Push** a las ramas `main` o `master`
-- **Pull Requests** a las ramas `main` o `master`
-- **Manualmente** mediante workflow_dispatch
+**Artifacts generados:**
+- `playwright-report`: Resultados de pruebas API (HTML)
+- `cucumber-reports`: Resultados de pruebas E2E (HTML, JSON, JUnit)
 
-Para ejecutar manualmente:
+Para ejecutar manualmente: **Actions** → **Run Tests** → **Run workflow**
 
-1. Ve a **Actions** en GitHub
-2. Selecciona **Run Tests**
-3. Haz clic en **Run workflow**
+## Reportes
 
-## 📊 Reportes
+Los reportes se generan en `/reports`:
 
-Los reportes se generan en la carpeta `/reports`:
+| Tipo | Ubicación |
+|------|-----------|
+| Playwright HTML | `playwright-report/index.html` |
+| Cucumber HTML | `reports/cucumber-report.html` |
+| Cucumber JSON | `reports/cucumber-report.json` |
+| JUnit XML | `reports/cucumber-junit.xml` |
+| PDF | `reports/test-report.pdf` |
 
-- **HTML**: `reports/playwright-report/`
-- **JSON**: `reports/playwright-results.json`
-- **JUnit**: `reports/junit-results.xml`
-- **Cucumber**: `reports/cucumber-report.html`
-- **PDF**: `reports/test-report.pdf`
+En GitHub Actions, los reportes están disponibles como **artifacts** al finalizar cada ejecución.
 
-En GitHub Actions, los reportes están disponibles como **artifacts** después de cada ejecución.
+## Estructura del Proyecto
 
-## 🎭 Patrón Screenplay
-
-Este proyecto implementa el patrón Screenplay para mejor organización y mantenibilidad:
-
-### Componentes
-
-- **Actors** (Actores): Representan usuarios que interactúan con el sistema
-  - `ShopperActor`: Para pruebas E2E
-  - `ApiUserActor`: Para pruebas de API
-
-- **Tasks** (Tareas): Acciones de negocio de alto nivel
-  - `Login`, `AddToCart`, `Checkout`
-  - `AuthenticateUser`, `GetProducts`, `ManageCart`
-
-- **Interactions** (Interacciones): Acciones atómicas
-  - `Click`, `Fill`, `Navigate`, `Wait`
-  - `ApiRequest`
-
-- **Questions** (Preguntas): Validaciones y aserciones
-  - `ApiResponse`, `PageElement`
-
-### Ejemplo de Uso
-
-```typescript
-// E2E Test
-await actor.attemptsTo(
-  Login.asStandardUser(),
-  AddToCart.product("Sauce Labs Backpack"),
-  Checkout.withInformation("John", "Doe", "12345")
-);
-
-// API Test
-await apiActor.attemptsTo(
-  AuthenticateUser.asDefaultUser(),
-  GetProducts.all().withLimit(10),
-  ManageCart.create().withProducts({ id: 1, quantity: 2 })
-);
-
-const status = await apiActor.asks(ApiResponse.status());
-expect(status).toBe(200);
+```
+PipelineCraft-R3/
+├── .github/workflows/          # GitHub Actions
+├── screenplay/                 # Patrón Screenplay
+│   ├── actors/                 # Actores
+│   ├── tasks/                  # Tareas de negocio
+│   ├── interactions/           # Interacciones atómicas
+│   └── questions/              # Validaciones
+├── tests/
+│   ├── e2e/                    # Pruebas E2E (Cucumber)
+│   │   ├── features/           # Archivos .feature (Gherkin)
+│   │   ├── step-definitions/   # Step definitions
+│   │   └── pages/              # Page Objects
+│   ├── api/                    # Pruebas API (Playwright)
+│   └── utils/                  # Utilidades (apiHelper, apiConfig)
+├── reports/                    # Reportes generados
+├── playwright.config.ts        # Configuración Playwright
+├── cucumber.js                 # Configuración Cucumber
+└── package.json                # Dependencias
 ```
 
-## 👥 Colaboradores
+## Aprendizajes Clave
 
-- **Usuario con permisos de ejecución**: `michaelpena2404`
+- **Patrón Screenplay**: Arquitectura escalable y mantenible para automatización
+- **BDD con Cucumber**: Especificaciones legibles para stakeholders no técnicos
+- **API Testing**: Contract testing y validación de flujos sin UI
+- **CI/CD**: Automatización completa del pipeline de pruebas
+- **Debugging con IA**: Optimización del desarrollo mediante asistencia inteligente
+- **Cross-platform Testing**: Ejecución en múltiples navegadores (Chromium, Firefox, WebKit)
 
-## 📝 Scripts Disponibles
+## Recursos
 
-| Script | Descripción |
-|--------|-------------|
-| `npm test` | Ejecuta todas las pruebas (E2E + API) |
-| `npm run test:e2e` | Ejecuta solo pruebas E2E con Cucumber |
-| `npm run test:api` | Ejecuta solo pruebas de API con Playwright |
-| `npm run test:ui` | Ejecuta pruebas en modo headed (con navegador visible) |
-| `npm run test:report` | Muestra el reporte HTML de Playwright |
-| `npm run generate:pdf` | Genera reporte en formato PDF |
-| `npm run install:browsers` | Instala navegadores de Playwright |
-
-## 🔧 Configuración
-
-### Playwright (`playwright.config.ts`)
-
-- Navegadores: Chromium, Firefox, WebKit
-- Reportes: HTML, JSON, JUnit
-- Screenshots: Solo en fallos
-- Videos: Solo en fallos
-- Traces: Solo en fallos
-
-### Cucumber (`cucumber.js`)
-
-- Formatos: HTML, JSON, JUnit
-- Retry: 1 intento
-- Paralelismo: 2 workers
-- Tags: Soporte para `@smoke`, `@regression`, `@skip`
-
-## 🌐 URLs de Prueba
-
-- **E2E Application**: https://www.saucedemo.com
-- **API Endpoint**: https://dummyjson.com
 - **Repository**: https://github.com/willkwolf/PipelineCraft-R3
-
-## 📚 Documentación Adicional
-
-- [Playwright Docs](https://playwright.dev/docs/intro)
-- [Cucumber Docs](https://cucumber.io/docs/cucumber/)
-- [DummyJSON API Docs](https://dummyjson.com/docs)
-- [TypeScript Docs](https://www.typescriptlang.org/docs/)
-
-## 🤝 Contribución
-
-Para contribuir al proyecto:
-
-1. Fork el repositorio
-2. Crea una rama feature (`git checkout -b feature/nueva-funcionalidad`)
-3. Commit tus cambios (`git commit -m 'Agregar nueva funcionalidad'`)
-4. Push a la rama (`git push origin feature/nueva-funcionalidad`)
-5. Abre un Pull Request
-
-## 📄 Licencia
-
-Este proyecto está bajo la licencia MIT.
-
-## 📧 Contacto
-
-Para preguntas o soporte, contacta al equipo de QA Automation.
+- **E2E App**: https://www.saucedemo.com
+- **API Endpoint**: https://dummyjson.com
+- **Documentación**: [Playwright](https://playwright.dev) | [Cucumber](https://cucumber.io) | [DummyJSON](https://dummyjson.com/docs)
 
 ---
 
-**Generado con ❤️ por el equipo de PipelineCraft-R3**
+**Desarrollado como ejercicio académico de QA Automation**
